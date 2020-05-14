@@ -1,20 +1,18 @@
 <template>
     <div id="app">
-       hello world
+       <m-header></m-header>
+       <router-link to="/"></router-link>
     </div>
 </template>
 
 <script>
+import MHeader from 'components/m-header/m-header'
 export default {
-
+  components: {
+    MHeader
+  }
 }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>
-    @import '~common/stylus/variable.styl'
-
-    #app
-        color: $color-themee
-        font-size 36px
-
 </style>
