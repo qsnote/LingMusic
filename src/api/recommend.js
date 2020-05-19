@@ -1,4 +1,4 @@
-import jsconp from 'common/js/jsconp'
+import jsconp from 'common/js/jsonp'
 import {commonParams, options} from './config'
 
 export function getRecommend() {
