@@ -6,7 +6,7 @@
       </slot>
     </div>
     <div class="dots">
-
+      <span v-for="(item,index) in dots" :key="index" class="dot" :class="{active :currentIndex===index}"></span>
     </div>
   </div>
 </template>
@@ -29,6 +29,12 @@ export default {
       default: 4000
     }
   },
+  data () {
+    return {
+      dots: [],
+      currentIndex: 0
+    }
+  },
   mounted () {
     // 浏览器刷新时间在17ms左右
     // setTimeout(() => {
@@ -39,10 +45,21 @@ export default {
       this._setSliderWidth()
       this._initDots()
       this._initSlider()
+
+      if (this.autoPlay) {
+        this._play()
+      }
+    })
+    window.addEventListener('resize', () => {
+      if (!this.slider) {
+        return
+      }
+      this._setSliderWidth(true)
+      this.slider.refresh()
     })
   },
   methods: {
-    _setSliderWidth () {
+    _setSliderWidth (isResize) {
       this.children = this.$refs.sliderGroup.children
 
       let width = 0
@@ -54,13 +71,13 @@ export default {
         width += sliderWidth
       }
 
-      if (this.loop) {
+      if (this.loop && !isResize) {
         width += 2 * sliderWidth
       }
       this.$refs.sliderGroup.style.width = width + 'px'
     },
     _initDots () {
-
+      this.dots = new Array(this.children.length)
     },
     _initSlider () {
       this.slider = new BScroll(this.$refs.slider, {
@@ -70,9 +87,29 @@ export default {
         snap: true,
         snapLoop: this.loop,
         snapThreshold: 0.3,
-        snapSpeed: 400,
-        click: true
+        snapSpeed: 400
       })
+      this.slider.on('scrollEnd', () => {
+        let pageIndex = this.slider.getCurrentPage().pageX
+        if (this.loop) {
+          pageIndex -= 1
+        }
+        this.currentIndex = pageIndex
+
+        if (this.autoPlay) {
+          clearTimeout(this.timer)
+          this._play()
+        }
+      })
+    },
+    _play () {
+      let pageIndex = this.currentIndex + 1
+      if (this.loop) {
+        pageIndex += 1
+      }
+      this.timer = setTimeout(() => {
+        this.slider.goToPage(pageIndex, 0, 400)
+      }, this.interval)
     }
   }
 }
@@ -100,22 +137,22 @@ export default {
           img
             display block
             width 100%
-      .dots
-        position absolute
-        right 0
-        left 0
-        bottom 12px
-        text-align center
-        font-size 0
-        .dot
-          display inline-block
-          margin 0 4px
-          width 8px
-          height 8px
-          border-radius 50%
-          backgroud $color-text-l
-          $.active
-            width 20px
-            border-radius 5px
-            background $color-text-ll
+    .dots
+      position absolute
+      right 0
+      left 0
+      bottom 12px
+      text-align center
+      font-size 0
+      .dot
+        display inline-block
+        margin 0 4px
+        width 8px
+        height 8px
+        border-radius 50%
+        background $color-text-l
+        &.active
+          width 20px
+          border-radius 5px
+          background $color-text-ll
 </style>
