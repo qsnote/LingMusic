@@ -108,6 +108,7 @@ export default {
         pageIndex += 1
       }
       this.timer = setTimeout(() => {
+        clearTimeout(this.timer)
         this.slider.goToPage(pageIndex, 0, 400)
       }, this.interval)
     }

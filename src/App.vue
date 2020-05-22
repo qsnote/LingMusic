@@ -1,9 +1,12 @@
 <template>
-    <div id="app">
-       <m-header></m-header>
-       <tab></tab>
-       <router-view></router-view>
-    </div>
+  <div id="app">
+    <m-header></m-header>
+    <tab></tab>
+    <!-- 路由匹配到的组件会显示在router-view位置 -->
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
+  </div>
 </template>
 
 <script>
@@ -17,5 +20,4 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus" scoped>
-</style>
+<style lang="stylus" rel="stylesheet/stylus" scoped></style>
