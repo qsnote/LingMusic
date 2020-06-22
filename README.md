@@ -1,6 +1,7 @@
 # vue-music
 
 > 音乐播放器
+封装jsonp模拟请求 抓取QQ音乐数据
 
 ## Build Setup
 
