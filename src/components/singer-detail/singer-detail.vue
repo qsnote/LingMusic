@@ -1,19 +1,19 @@
 <template>
   <transition name="slide">
     <div class="singer-detail">
-    1111111111
+      {{singer}}
     </div>
   </transition>
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+// import {mapGetters} from 'vuex'
 export default {
   computed: {
-    ...mapGetters(['singer'])
+    // ...mapGetters(['singer'])
   },
   created() {
-    console.log(this.singer)
+    this.singer = this.$store.state.singer
   }
 }
 </script>
@@ -28,8 +28,10 @@ export default {
   right 0
   bottom 0
   background $color-background
+
 .slide-enter-active, .slide-leave-active
-  transition all .3s
+  transition all 0.3s
 .slide-enter, .slide-leave-to
+  transition all 0.3s
   transform translate3d(100%, 0, 0)
 </style>
