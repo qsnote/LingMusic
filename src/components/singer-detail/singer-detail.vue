@@ -7,13 +7,10 @@
 </template>
 
 <script>
-// import {mapGetters} from 'vuex'
+import {mapGetters} from 'vuex'
 export default {
   computed: {
-    // ...mapGetters(['singer'])
-  },
-  created() {
-    this.singer = this.$store.state.singer
+    ...mapGetters(['singer'])
   }
 }
 </script>
