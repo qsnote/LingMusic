@@ -13,6 +13,5 @@ export const mode = state => state.mode
 export const currentindex = state => state.currentindex
 
 export const currentSong = state => {
-  console.log(333)
   return state.playList[state.currentIndex] || {}
 }
