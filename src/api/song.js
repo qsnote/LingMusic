@@ -1,8 +1,29 @@
-import { ERR_OK } from 'api/config'
 import { commonParams } from './config'
+import { getUid } from 'common/js/uid'
 import axios from 'axios'
+import { ERR_OK } from 'api/config'
 
 const debug = process.env.NODE_ENV !== 'production'
+
+export function getLyric(mid) {
+  const url = debug ? '/api/lyric' : 'http://ustbhuangyi.com/music/api/lyric'
+
+  const data = Object.assign({}, commonParams, {
+    songmid: mid,
+    platform: 'yqq',
+    hostUin: 0,
+    needNewCode: 0,
+    categoryId: 10000000,
+    pcachetime: +new Date(),
+    format: 'json'
+  })
+
+  return axios.get(url, {
+    params: data
+  }).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}
 
 export function getSongsUrl(songs) {
   const url = debug ? '/api/getPurlUrl' : 'http://ustbhuangyi.com/music/api/getPurlUrl'
@@ -51,6 +72,7 @@ export function getSongsUrl(songs) {
         }
       })
     }
+
     function retry() {
       if (--tryTime >= 0) {
         request()
@@ -63,18 +85,6 @@ export function getSongsUrl(songs) {
   })
 }
 
-let _uid = ''
-
-export function getUid() {
-  if (_uid) {
-    return _uid
-  }
-  if (!_uid) {
-    const t = (new Date()).getUTCMilliseconds()
-    _uid = '' + Math.round(2147483647 * Math.random()) * t % 1e10
-  }
-  return _uid
-}
 function genUrlMid(mids, types) {
   const guid = getUid()
   return {
