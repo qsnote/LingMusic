@@ -26,14 +26,14 @@
             <div class="icon i-left">
               <i class="icon-sequence"></i>
             </div>
-            <div class="icon i-left">
-              <i class="icon-prev"></i>
+            <div class="icon i-left" :class="disableCls">
+              <i class="icon-prev" @click.passive="prev"></i>
             </div>
-            <div class="icon i-center">
-              <i :class="playIcon" @click="togglePlaying"></i>
+            <div class="icon i-center" :class="disableCls">
+              <i :class="playIcon"  @click="togglePlaying"></i>
             </div>
-            <div class="icon i-right">
-              <i class="icon-next"></i>
+            <div class="icon i-right" :class="disableCls">
+              <i class="icon-next" @click.stop.prevent="next"></i>
             </div>
             <div class="icon i-right">
               <i class="icon icon-not-favorite"></i>
@@ -62,7 +62,7 @@
       </div>
     </transition>
     <!-- h5新标签 实现播放功能 -->
-    <audio :src="currentSong.url" ref="audio"></audio>
+    <audio :src="currentSong.url" ref="audio" @canplay="ready" @error="error"></audio>
   </div>
 </template>
 
@@ -74,7 +74,15 @@ import { prefixStyle } from 'common/js/dom'
 const transform = prefixStyle('transform')
 
 export default {
+  data() {
+    return {
+      songReady: false
+    }
+  },
   computed: {
+    disableCls() {
+      return this.songReady ? ' ' : 'disable'
+    },
     cdCls() {
       return this.playing ? 'play' : 'play pause'
     },
@@ -88,7 +96,8 @@ export default {
       'fullScreen',
       'playList',
       'currentSong',
-      'playing'
+      'playing',
+      'currentIndex'
     ])
   },
   methods: {
@@ -138,7 +147,37 @@ export default {
       this.$refs.cdWrapper.style[transform] = ''
     },
     togglePlaying() {
+      if (!this.songReady) return
       this.setPlayingState(!this.playing)
+    },
+    next() {
+      if (!this.songReady) return
+      let index = this.currentIndex + 1
+      if (index === this.playList.length) {
+        index = 0
+      }
+      this.setCurrentIndex(index)
+      if (!this.playing) {
+        this.togglePlaying()
+      }
+    },
+    prev() {
+      if (!this.songReady) return
+      let index = this.currentIndex - 1
+      if (index === -1) {
+        index = this.playList.length - 1
+      }
+      this.setCurrentIndex(index)
+      if (!this.playing) {
+        this.togglePlaying()
+      }
+    },
+    ready() {
+      this.songReady = true
+    },
+    error() {
+      // 避免歌曲加载失败 操作项不能使用
+      this.songReady = true
     },
     _getPosAndScale() {
       const targetWidth = 40
@@ -157,7 +196,8 @@ export default {
     },
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
-      setPlayingState: 'SET_PLAYING_STATE'
+      setPlayingState: 'SET_PLAYING_STATE',
+      setCurrentIndex: 'SET_CURRENT_INDEX'
     })
   },
   watch: {
@@ -179,7 +219,6 @@ export default {
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
   @import "~common/stylus/mixin"
-
   .player
     .normal-player
       position: fixed
