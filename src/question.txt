@@ -1,3 +1,6 @@
 1. transition 进入效果未生效
 
 2. store 存singer数据没问题，取数据未更新 ...mapGetters(['singer']),用this.$store.state.singer可以
+
+3. Unable to preventDefault inside passive event listener due to target being treated as passive
+点击事件时报错
