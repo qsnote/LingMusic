@@ -52,5 +52,5 @@ export function deleteSearch(query) {
 
 export function clearSearch() {
   storage.remove(SEARCH_KEY)
-  return []
+  return ['haha']
 }
