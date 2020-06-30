@@ -30,7 +30,8 @@ import Loading from 'base/loading/loading'
 import NoResult from 'base/no-result/no-result'
 import { search } from 'api/search'
 import { ERR_OK } from 'api/config'
-import { createSong, isValidMusic, processSongsUrl } from 'common/js/song'
+import { createSong, isValidMusic } from 'common/js/song'
+// import { processSongsUrl } from 'common/js/song'
 import { mapMutations, mapActions } from 'vuex'
 import Singer from 'common/js/singer'
 
@@ -66,12 +67,15 @@ export default {
       this.hasMore = true
       this.$refs.suggest.scrollTo(0, 0)
       search(this.query, this.page, this.showSinger, perpage).then((res) => {
+        // 搜索接口报跨域 调不了了
         if (res.code === ERR_OK) {
-          console.log(res, '----')
-          this._genResult(res.data).then((result) => {
-            this.result = result
-          })
-          this._checkMore(res.data)
+          console.log(res, '----') //
+          this.result = []
+          this.hasMore = false
+          // this._genResult(deadData).then((result) => {
+          //   this.result = result
+          // })
+          // this._checkMore(deadData)
         }
       })
     },
@@ -123,13 +127,13 @@ export default {
     },
     _genResult(data) {
       let ret = []
-      if (data.zhida && data.zhida.singerid && this.page === 1) {
+      if (data && data.zhida && data.zhida.singerid && this.page === 1) {
         ret.push({...data.zhida, ...{type: TYPE_SINGER}})
       }
-      return processSongsUrl(this._normalizeSongs(data.song.list)).then((songs) => {
-        ret = ret.concat(songs)
-        return ret
-      })
+      // return processSongsUrl(this._normalizeSongs(data.song.list)).then((songs) => {
+      //   ret = ret.concat(songs)
+      //   return ret
+      // })
     },
     _normalizeSongs(list) {
       let ret = []

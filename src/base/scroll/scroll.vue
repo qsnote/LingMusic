@@ -29,6 +29,11 @@ export default {
     pullup: {
       type: Boolean,
       default: false
+    },
+    // input获取焦点时在移动端会有键盘出现，滚动列表时，让input失去焦点 收起键盘
+    beforeScroll: {
+      type: Boolean,
+      default: false
     }
   },
   mounted () {
@@ -56,6 +61,12 @@ export default {
           if (this.scroll.y <= this.scroll.maxScrollY + 50) {
             this.$emit('scrollToEnd')
           }
+        })
+      }
+      // 滚动之前派发事件
+      if (this.beforeScroll) {
+        this.scroll.on('beforeScrollStart', () => {
+          this.$emit('beforeScroll')
         })
       }
     },
