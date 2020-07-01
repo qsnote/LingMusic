@@ -8,14 +8,31 @@
         </div>
       </div>
       <div class="search-box-wrapper">
-<search-list></search-list>
+        <search-box placeholder="搜索歌曲" @query="onQueryChange" ref="searchBox"></search-box>
       </div>
-      <div class="shortcut">
-
+      <div class="shortcut" v-show="!query">
+        <switches :switches="switches" :currentIndex="currentIndex" @switch="switchItem"></switches><div class="list-wrapper">
+          <scroll v-if="currentIndex===0" :data="playHistory" class="list-scroll" ref="songList">
+            <div class="list-inner">
+              <song-list :songs="playHistory" @select="selectSong"></song-list>
+            </div>
+          </scroll>
+          <scroll v-if="currentIndex===1" :data="searchHistory" class="list-scroll" ref="searchList">
+            <div class="list-inner">
+              <search-list :searches="searchHistory" @delete="deleteSearchHistory" @select="addQuery"></search-list>
+            </div>
+          </scroll>
+        </div>
       </div>
-      <div class="search-result">
-
+      <div class="search-result" v-show="query">
+        <suggest :query="query" :showSinger="showSinger" @select="selectSuggest" @listScroll="blurInput" ref="suggest"></suggest>
       </div>
+      <top-tip ref="topTip">
+        <div class="tip-title">
+          <i class="icon-ok"></i>
+          <span class="text">1首歌曲已经添加到播放队列</span>
+        </div>
+      </top-tip>
     </div>
   </transition>
 
@@ -26,27 +43,75 @@ import SearchBox from 'base/search-box/search-box'
 import SongList from 'base/song-list/song-list'
 import SearchList from 'base/search-list/search-list'
 import Scroll from 'base/scroll/scroll'
+import TopTip from 'base//top-tip/top-tip'
 import Suggest from 'components/suggest/suggest'
+import Switches from 'base/switches/switches'
+import { searchMixin } from 'common/js/mixin'
+import {mapGetters, mapActions} from 'vuex'
+import Song from 'common/js/song'
 export default {
+  mixins: [searchMixin],
   data() {
     return {
-      showFlag: false
+      showFlag: false,
+      showSinger: false,
+      switches: [{
+        name: '最近播放'
+      },
+      {
+        name: '搜索历史'
+      }],
+      currentIndex: 0
     }
+  },
+  computed: {
+    ...mapGetters([
+      'playHistory'
+    ])
   },
   methods: {
     show() {
       this.showFlag = true
+
+      setTimeout(() => {
+        if (this.currentIndex === 0) {
+          this.$refs.songList.refresh()
+        } else {
+          this.$refs.searchList.refresh()
+        }
+      })
     },
     hide() {
       this.showFlag = false
-    }
+    },
+    showTip() {
+      this.$refs.topTip.show()
+    },
+    switchItem(index) {
+      this.currentIndex = index
+    },
+    selectSuggest() {
+      this.saveSearch()
+      this.showTip()
+    },
+    selectSong(song, index) {
+      if (index !== 0) {
+        this.insertSong(new Song(song))
+        this.showTip()
+      }
+    },
+    ...mapActions([
+      'insertSong'
+    ])
   },
   components: {
     SearchBox,
     SongList,
     SearchList,
     Scroll,
-    Suggest
+    Suggest,
+    Switches,
+    TopTip
   }
 }
 </script>
