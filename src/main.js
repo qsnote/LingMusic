@@ -14,6 +14,11 @@ import './common/stylus/index.styl'
 //   }
 // })
 
+// eslint-disable-next-line no-unused-vars
+import vConsole from 'vconsole'
+
+console.log('test')
+
 // fastclick 解决移动端按钮点击3s延迟问题
 fastclick.attach(document.body)
 

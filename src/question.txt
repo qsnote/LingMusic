@@ -4,3 +4,5 @@
 
 3. Unable to preventDefault inside passive event listener due to target being treated as passive
 点击事件时报错
+
+4. 移动端调试工具： WechatFE/vconsole
