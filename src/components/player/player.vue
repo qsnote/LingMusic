@@ -87,7 +87,7 @@
     </transition>
     <playlist ref="playlist"></playlist>
     <!-- h5新标签 实现播放功能 -->
-    <audio :src="currentSong.url" ref="audio" @canplay="ready" @error="error" @timeupdate="updateTime"
+    <audio :src="currentSong.url" ref="audio" @play="ready" @error="error" @timeupdate="updateTime"
     @ended="end"></audio>
   </div>
 </template>
@@ -280,6 +280,9 @@ export default {
     },
     getLyric() {
       this.currentSong.getLyric() && this.currentSong.getLyric().then(lyric => {
+        if (this.currentSong.lyric !== lyric) {
+          return
+        }
         this.currentLyric = new Lyric(lyric, this.handleLyric)
         if (this.playing) {
           this.currentLyric.play()
@@ -402,8 +405,9 @@ export default {
       //   this.$refs.audio.play()
       //   this.getLyric()
       // })
+      clearTimeout(this.timer)
       // 保证微信从后台切到前台 仍能继续播放
-      setTimeout(() => {
+      this.timer = setTimeout(() => {
         this.$refs.audio.play()
         this.getLyric()
       }, 1000)
