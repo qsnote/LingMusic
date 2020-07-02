@@ -58,7 +58,7 @@
               <i class="icon-next" @click.stop.prevent="next"></i>
             </div>
             <div class="icon i-right">
-              <i class="icon icon-not-favorite"></i>
+              <i class="icon" :class="getFavoriteIcon(currentSong)" @click.stop="toggleFavorite(currentSong)"></i>
             </div>
           </div>
         </div>
@@ -147,6 +147,7 @@ export default {
     },
     ...mapGetters([
       'fullScreen',
+      'currentIndex',
       'playing'
     ])
   },
@@ -278,7 +279,7 @@ export default {
       return minute + ':' + second
     },
     getLyric() {
-      this.currentSong.getLyric().then(lyric => {
+      this.currentSong.getLyric() && this.currentSong.getLyric().then(lyric => {
         this.currentLyric = new Lyric(lyric, this.handleLyric)
         if (this.playing) {
           this.currentLyric.play()

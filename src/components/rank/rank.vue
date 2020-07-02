@@ -41,8 +41,8 @@ export default {
     }
   },
   methods: {
-    handlePlayList(playlist) {
-      const bottom = playlist.length > 0 ? '60px' : ''
+    handlePlayList(playList) {
+      const bottom = playList.length > 0 ? '60px' : ''
 
       this.$refs.rank.style.bottom = bottom
       this.$refs.toplist.refresh()
